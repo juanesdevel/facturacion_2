@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Facturación</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+
+    <h1>Sistema de Facturación</h1>
+
+    <h2>Productos</h2>
+    <table id="productos"></table>
+
+    <h2>Clientes</h2>
+    <table id="clientes"></table>
+
+    <h2>Usuarios</h2>
+    <table id="usuarios"></table>
+
+    <h2>Facturas</h2>
+    <table id="facturas"></table>
+
+    <h2>Ventas</h2>
+    <table id="ventas"></table>
+
+    <script>
+        async function obtenerDatos() {
+            try {
+                let response = await fetch("http://localhost:8080/TuProyecto/FacturacionServlet");
+                let data = await response.json();
+
+                renderTable("productos", data.productos);
+                renderTable("clientes", data.clientes);
+                renderTable("usuarios", data.usuarios);
+                renderTable("facturas", data.facturas);
+                renderTable("ventas", data.ventas);
+
+            } catch (error) {
+                console.error("Error al obtener los datos:", error);
+            }
+        }
+
+        function renderTable(id, list) {
+            let table = document.getElementById(id);
+            table.innerHTML = ""; 
+            
+            if (list.length === 0) return;
+
+            let headerRow = document.createElement("tr");
+            Object.keys(list[0]).forEach(key => {
+                let th = document.createElement("th");
+                th.textContent = key;
+                headerRow.appendChild(th);
+            });
+            table.appendChild(headerRow);
+
+            list.forEach(item => {
+                let row = document.createElement("tr");
+                Object.values(item).forEach(value => {
+                    let td = document.createElement("td");
+                    td.textContent = value;
+                    row.appendChild(td);
+                });
+                table.appendChild(row);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", obtenerDatos);
+    </script>
+
+</body>
+</html>
